@@ -1,14 +1,16 @@
-use crate::{
-    Catalog, Collection, Error, Href, Item, Link, Result, CATALOG_TYPE, COLLECTION_TYPE, ITEM_TYPE,
-};
+use crate::{CATALOG_TYPE, COLLECTION_TYPE, FEATURECOLLECTION_TYPE, Catalog, Collection, Error, Href, ITEM_TYPE, Item, Link, Result,FeatureCollection};
 
 /// A type used to pass either an [Object] or an [HrefObject] into functions.
 pub type ObjectHrefTuple = (Object, Option<Href>);
 const TYPE_FIELD: &str = "type";
 
+
 /// A wrapper around any of the three main STAC entities: [Item], [Catalog], and [Collection].
 #[derive(Debug, PartialEq, Clone)]
 pub enum Object {
+    //  A [FeatureCollection]
+    FeatureCollection(FeatureCollection),
+
     /// An [Item].
     Item(Item),
 
@@ -48,6 +50,7 @@ impl Object {
                     ITEM_TYPE => Ok(Object::Item(serde_json::from_value(value)?)),
                     CATALOG_TYPE => Ok(Object::Catalog(serde_json::from_value(value)?)),
                     COLLECTION_TYPE => Ok(Object::Collection(serde_json::from_value(value)?)),
+                    FEATURECOLLECTION_TYPE => Ok(Object::FeatureCollection(serde_json::from_value(value)?)),
                     _ => Err(Error::InvalidTypeValue(type_.to_string())),
                 }
             } else {
@@ -126,6 +129,7 @@ impl Object {
             Object::Item(item) => &item.r#type,
             Object::Catalog(catalog) => &catalog.r#type,
             Object::Collection(collection) => &collection.r#type,
+            Object::FeatureCollection(feature_collection) => &feature_collection.r#type
         }
     }
 
@@ -143,6 +147,7 @@ impl Object {
             Object::Item(item) => &item.id,
             Object::Catalog(catalog) => &catalog.id,
             Object::Collection(collection) => &collection.id,
+            Object::FeatureCollection(_) => todo!(),
         }
     }
 
@@ -167,6 +172,8 @@ impl Object {
                 .and_then(|value| value.as_str()),
             Object::Catalog(catalog) => catalog.title.as_deref(),
             Object::Collection(collection) => collection.title.as_deref(),
+            Object::FeatureCollection(_) => todo!(),
+
         }
     }
 
@@ -184,6 +191,8 @@ impl Object {
             Object::Item(item) => &item.links,
             Object::Catalog(catalog) => &catalog.links,
             Object::Collection(collection) => &collection.links,
+            Object::FeatureCollection(_) => todo!(),
+
         }
     }
 
@@ -238,6 +247,8 @@ impl Object {
             Object::Item(item) => item.links.push(link),
             Object::Catalog(catalog) => catalog.links.push(link),
             Object::Collection(collection) => collection.links.push(link),
+            Object::FeatureCollection(_) => todo!(),
+
         }
     }
 
@@ -257,6 +268,8 @@ impl Object {
             Object::Item(item) => serde_json::to_value(item).map_err(Error::from),
             Object::Catalog(catalog) => serde_json::to_value(catalog).map_err(Error::from),
             Object::Collection(collection) => serde_json::to_value(collection).map_err(Error::from),
+            Object::FeatureCollection(feature_collection) => serde_json::to_value(feature_collection).map_err(Error::from),
+
         }
     }
 
@@ -265,7 +278,7 @@ impl Object {
             Object::Item(item) => &mut item.links,
             Object::Catalog(catalog) => &mut catalog.links,
             Object::Collection(collection) => &mut collection.links,
-        }
+            Object::FeatureCollection(_) => todo!(),        }
     }
 }
 

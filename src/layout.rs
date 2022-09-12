@@ -297,6 +297,7 @@ impl Strategy for BestPractices {
             Object::Item(item) => href.push_str(&item.id),
             Object::Catalog(_) => href.push_str("catalog"),
             Object::Collection(_) => href.push_str("collection"),
+            Object::FeatureCollection(_) => href.push_str("feature_collection"),
         }
         href.push_str(".json");
         Ok(stac.set_href(handle, href))

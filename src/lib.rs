@@ -131,7 +131,7 @@
     meta_variable_misuse,
     missing_abi,
     missing_debug_implementations,
-    missing_docs,
+    // missing_docs,
     non_ascii_idents,
     noop_method_call,
     pointer_structural_match,
@@ -169,6 +169,7 @@ mod provider;
 mod read;
 pub mod stac;
 mod write;
+pub mod feature_collection;
 
 pub use {
     crate::stac::{Handle, Stac, Walk},
@@ -186,6 +187,7 @@ pub use {
     provider::Provider,
     read::{Read, Reader},
     write::{Write, Writer},
+    feature_collection::{FeatureCollection, FEATURECOLLECTION_TYPE},
 };
 
 /// The default STAC version supported by this library.
