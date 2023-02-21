@@ -20,7 +20,7 @@ pub struct FeatureCollection {
     pub r#type: String,
     /// The STAC version the `Item` implements.
     #[serde(rename = "stac_version")]
-    pub version: String,
+    pub version: Option<String>,
     /// A list of extensions the `Item` implements.
     #[serde(rename = "stac_extensions")]
     #[serde(skip_serializing_if = "Option::is_none")]
